@@ -22,7 +22,7 @@ jobs:
         target: "/var/www/tbot"
 
     - name: Executing remote command
-      uses: appleboy/ssh-action@v0.1.10
+      uses: appleboy/ssh-action@v0.1.4
       with:
         HOST: ${{ secrets.HOST }}
         USERNAME: ${{ secrets.USERNAME }}
