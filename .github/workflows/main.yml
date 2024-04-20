@@ -18,7 +18,7 @@ jobs:
         port: ${{ secrets.PORT }}
         key: ${{ secrets.SSHKEY }}
         source: "."
-        target: "/var/www/tbot"
+        target: "/var/www/service/tbot"
 
     - name: Executing remote command
       uses: appleboy/ssh-action@v0.1.4
@@ -28,6 +28,6 @@ jobs:
         PORT: ${{ secrets.PORT }}
         KEY: ${{ secrets.SSHKEY }}
         script: |
-          ls
+          ls /var/www/service/tbot
           cd ~
           touch test.txt
