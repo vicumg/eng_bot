@@ -29,7 +29,7 @@ then
 		kill -s KILL $SERVICE_PID
 	fi
 	nohup $SERVICE > log/$(date +%F-%H-%M-%S).log 2>&1 </dev/null &
-elif [ $ACTION == 'stop' ]
+elif [ $ACTION = 'stop' ]
 then
 	if  ! [ -z $SERVICE_PID ]
         then
