@@ -1,11 +1,12 @@
 package main
 
 import (
-	"chatGptBot/knowledge/chat_gpt"
 	"chatGptBot/telegram"
 	"fmt"
 	"log"
 	"os"
+
+	"chatGptBot/knowledge/chat_gpt"
 
 	"github.com/joho/godotenv"
 )
