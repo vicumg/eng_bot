@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -80,8 +81,10 @@ func requestGpt(text string) string {
 		Content: text,
 	}
 
+	model := get_model()
+
 	request := Gtp_request{
-		Model: "gpt-4-turbo",
+		Model: model,
 	}
 	request.Messages = append(request.Messages, gpt_message_system)
 	request.Messages = append(request.Messages, gpt_message_user)
@@ -105,28 +108,42 @@ func requestGpt(text string) string {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+gpt_token)
 	if err != nil {
-		fmt.Println("Ошибка при создании запроса:", err)
+		fmt.Println("Error with request create:", err)
 	}
 	http_client := http.Client{}
 	resp, err := http_client.Do(req)
 	if err != nil {
-		fmt.Println("Ошибка при отправке запроса:", err)
-		return "Ошибка при отправке запроса"
+		fmt.Println("Error with request send:", err)
+		return "Error with request send"
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		fmt.Println("Ошибка при чтении тела ответа:", err)
-		return "Ошибка при чтении тела ответа:"
+		fmt.Println("Error while answer reading:", err)
+		return "Error while answer reading:"
 	}
 
-	fmt.Println("Ответ от сервера:", string(body))
-
 	var result ServerResponse
-	if err := json.Unmarshal(body, &result); err != nil { // Parse []byte to go struct pointer
-		fmt.Println("Can not unmarshal JSON")
+	if err := json.Unmarshal(body, &result); err != nil {
+		fmt.Println("Can't unmarshal JSON")
 	}
 
 	return result.Choices[0].Message.Content
+}
+
+func get_model() string {
+	config_file := "config.txt"
+	file, err := os.Open(config_file)
+	if err != nil {
+		log.Fatal("Failed to open config file:", err)
+	}
+	defer file.Close()
+
+	var model string
+	_, err = fmt.Fscanf(file, "model_name:%q", &model)
+	if err != nil {
+		log.Fatal("Failed to read model name from config file:", err)
+	}
+	return model
 }
