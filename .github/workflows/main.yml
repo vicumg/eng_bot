@@ -16,7 +16,7 @@ jobs:
         go-version: 1.22      
 
     - name: Build app 
-      run: go build -o app main.go
+      run: go build .
 
     - name: Copy app via scp
       uses: appleboy/scp-action@master
