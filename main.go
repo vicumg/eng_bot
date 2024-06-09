@@ -1,7 +1,6 @@
 package main
 
 import (
-	"chatGptBot/telegram"
 	"fmt"
 	"log"
 	"os"
@@ -9,6 +8,8 @@ import (
 	"chatGptBot/knowledge/chat_gpt"
 
 	"github.com/joho/godotenv"
+	"github.com/vicumg/t__gpt_bot.git/knowledge/chat_gpt"
+	"github.com/vicumg/t__gpt_bot.git/telegram"
 )
 
 func main() {
