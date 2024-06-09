@@ -9,6 +9,24 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    
+    - name: Set up Go 1.22
+      uses: actions/setup-go@v1
+      with: 
+        go-version: 1.22      
+
+    - name: Build app 
+      run: go build .
+
+    - name: Copy app via scp
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        port: ${{ secrets.PORT }}
+        key: ${{ secrets.SSHKEY }}
+        source: "app"
+        target: "/var/www/service/tbot"
 
     - name: Copy repository contents via scp
       uses: appleboy/scp-action@master

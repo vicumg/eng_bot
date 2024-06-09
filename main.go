@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 
+	"chatGptBot/knowledge/chat_gpt"
+
 	"github.com/joho/godotenv"
 	"github.com/vicumg/t__gpt_bot.git/knowledge/chat_gpt"
 	"github.com/vicumg/t__gpt_bot.git/telegram"
