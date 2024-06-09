@@ -85,13 +85,15 @@ func requestGpt(text string) string {
 		Content: get_prompt(text),
 	}
 	//remove prompt from text if it exists
+	promt_lenth :=len(promt)	
+	text_request := text
 	if promt_in_text {
-		text = text[:len(text)-len(promt)-2]
+		text_request = text[promt_lenth+2:]
 	}
 
 	gpt_message_user := gpt_message{
 		Role:    "user",
-		Content: text,
+		Content: text_request,
 	}
 
 	model := get_model()
