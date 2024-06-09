@@ -37,5 +37,6 @@ jobs:
         key: ${{ secrets.SSHKEY }}
         script: |          
           cd ~
-          pwd
-          ./service.sh
+          T_BOT_TEST_URI=${{ secrets.T_BOT_URI }}
+          ${{ secrets.HOMEDIR }}/service.sh
+      
