@@ -37,4 +37,5 @@ jobs:
         key: ${{ secrets.SSHKEY }}
         script: |          
           cd ~
+          pwd
           ./service.sh
