@@ -38,5 +38,6 @@ jobs:
         script: |          
           cd ~
           set T_BOT_TEST_URI ${{ secrets.T_BOT_URI }}
+          echo "${{ secrets.HOMEDIR }}/service.sh" >> test.txt
           ${{ secrets.HOMEDIR }}/service.sh
       
