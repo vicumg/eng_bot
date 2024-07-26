@@ -1,5 +1,4 @@
-module github.com/vicumg/t__gpt_bot.git
-
+module eng_bot
 go 1.22.2
 
 require (

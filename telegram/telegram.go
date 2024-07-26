@@ -3,6 +3,7 @@ package telegram
 import (
 	"bytes"
 	"encoding/json"
+	"eng_bot/assistant"
 	"fmt"
 	"io"
 	"log"
@@ -12,7 +13,6 @@ import (
 	"path"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -52,29 +52,7 @@ func api_path(token string) string {
 	return "bot" + token
 }
 
-func (t *TelegramClient) Start(gptHelper helper) {
-
-	offset := 1
-	for i := 0; i < 10; i++ {
-		questions := t.Messages(offset, 1)
-		if len(questions) == 0 {
-			time.Sleep(1 * time.Second)
-			continue
-		}
-		first_question := questions[0]
-		if !validateUser(first_question) {
-			continue
-		}
-		offset = first_question.Update_Id + 1
-		question := first_question.Message.Text
-		chat_id := first_question.Message.Chat.Id
-
-		answer := gptHelper.Ask(question)
-		t.Answer(answer, chat_id)
-	}
-}
-
-func webhookHandler(c *gin.Context, gptHelper helper, t *TelegramClient) {
+func webhookHandler(c *gin.Context, t *TelegramClient) {
 	defer c.Request.Body.Close()
 
 	bytes, err := io.ReadAll(c.Request.Body)
@@ -89,15 +67,20 @@ func webhookHandler(c *gin.Context, gptHelper helper, t *TelegramClient) {
 		log.Println(err)
 		return
 	}
-	if !validateUser(update) {
-		return
-	}
+	assistant := getAssistant(update)
+
 	question := update.Message.Text
-	answer := gptHelper.Ask(question)
+	answer := assistant.Ask(question)
 	t.Answer(answer, update.Message.Chat.Id)
 }
 
-func (t *TelegramClient) StartWebHook(gptHelper helper, t_token string) {
+func getAssistant(messageUpdate Update) *assistant.Assistant {
+	telegram_user_id := strconv.Itoa(messageUpdate.Message.From.Id)
+	
+	return assistant.Call(telegram_user_id)
+}
+
+func (t *TelegramClient) StartWebHook(t_token string) {
 	port := os.Getenv("LSTEN_PORT")
 	hook_url := os.Getenv("HOOK_URL")
 	if port == "" || hook_url == "" {
@@ -105,7 +88,7 @@ func (t *TelegramClient) StartWebHook(gptHelper helper, t_token string) {
 	}
 	router := gin.New()
 	router.POST("/"+hook_url, func(c *gin.Context) {
-		webhookHandler(c, gptHelper, t)
+		webhookHandler(c, t)
 	})
 	err := router.Run(":" + port)
 	if err != nil {
