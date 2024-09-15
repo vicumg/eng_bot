@@ -16,6 +16,19 @@ type Assistant struct {
 	defaultSystemPromt string
 	userSystemPromt    string
 	chat_gpt           *chat_gpt.ChatGpt
+	history            []string
+}
+
+func (a *Assistant) getContextPromt() string {
+	//cobine them into one string
+	history_string := ""
+	if len(a.history) == 0 {
+		return ""
+	}
+	for _, message := range a.history {
+		history_string += message + "\n"
+	}
+	return "Here you are the history of messaging from first to last: " + history_string
 }
 
 var assisstantStorage = make(map[string]*Assistant)
@@ -53,7 +66,22 @@ func (a *Assistant) Ask(message string) string {
 		return "Api key is not set"
 	}
 
-	return a.chat_gpt.Ask(a.chatGptApiKey, a.defaultSystemPromt, message)
+	promt := a.defaultSystemPromt + a.getContextPromt()
+
+	answer := a.chat_gpt.Ask(a.chatGptApiKey, promt, message)
+
+	a.addHistory(message, answer)
+
+	return answer
+}
+
+func (a *Assistant) addHistory(message string, answer string) {
+	// check if history length is more than 5 remove the oldest message
+	if len(a.history) > 10 {
+		a.history = a.history[1:]
+	}
+	history_message := "User: " + message + "; You: " + answer
+	a.history = append(a.history, history_message)
 }
 
 func (a *Assistant) handleMessage(message string) (string, bool) {
