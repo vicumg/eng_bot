@@ -76,7 +76,7 @@ func webhookHandler(c *gin.Context, t *TelegramClient) {
 
 func getAssistant(messageUpdate Update) *assistant.Assistant {
 	telegram_user_id := strconv.Itoa(messageUpdate.Message.From.Id)
-	
+
 	return assistant.Call(telegram_user_id)
 }
 
