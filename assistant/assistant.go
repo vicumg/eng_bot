@@ -2,7 +2,11 @@ package assistant
 
 import (
 	"eng_bot/knowledge/chat_gpt"
+	"os"
+	"strconv"
 	"strings"
+
+	"github.com/joho/godotenv"
 )
 
 const (
@@ -77,7 +81,14 @@ func (a *Assistant) Ask(message string) string {
 
 func (a *Assistant) addHistory(message string, answer string) {
 	// check if history length is more than 5 remove the oldest message
-	if len(a.history) > 10 {
+	// history_limit get from env HISTORY_LIMIT
+	godotenv.Load()
+	history_limit := os.Getenv("HISTORY_LIMIT")
+	limit, err := strconv.Atoi(history_limit)
+	if err != nil {
+		limit = 10
+	}
+	if len(a.history) > limit {
 		a.history = a.history[1:]
 	}
 	history_message := "User: " + message + "; You: " + answer
